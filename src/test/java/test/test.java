@@ -17,6 +17,7 @@ import io.restassured.specification.ResponseSpecification;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import utils.*;
+import utils.data;
 
 public class test {
 
@@ -88,9 +89,9 @@ public class test {
                 .then()
                 .spec(responseSpec)
                 .log().body()
-                .body("title", equalTo("recommendation"),
-                        "body", equalTo("motorcycle"),
-                        "userId", equalTo(14),
+                .body("title", equalTo(postRequest.getTitle()),
+                        "body", equalTo(postRequest.getBody()),
+                        "userId", equalTo(postRequest.getUserId()),
                         "id", equalTo(101));
     }
 }

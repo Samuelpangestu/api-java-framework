@@ -9,5 +9,8 @@
         <module name="api-rest-assured" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="api-test-java" target="17" />
+    </bytecodeTargetLevel>
   </component>
 </project>
