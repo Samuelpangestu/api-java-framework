@@ -19,7 +19,7 @@ import org.junit.Test;
 import utils.*;
 import utils.data;
 
-public class test {
+public class MainTest {
 
     private static RequestSpecification requestSpec;
     public static ResponseSpecification responseSpec;
