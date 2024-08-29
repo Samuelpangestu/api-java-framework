@@ -10,6 +10,9 @@ import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 
 import static io.restassured.RestAssured.given;
+
+
+import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.*;
 
 import io.restassured.specification.RequestSpecification;
@@ -36,7 +39,22 @@ public class MainTest {
     }
 
     @Test
-    public void getAndValidateDataType() {
+    public void getResource() {
+        given()
+                .spec(requestSpec)
+
+                .when()
+                .get("/1")
+
+                .then()
+                .spec(responseSpec)
+                .statusCode(200)
+                .extract()
+                .response();
+    }
+
+    @Test
+    public void getLists() {
         Response response = given()
                 .spec(requestSpec)
 
@@ -58,40 +76,131 @@ public class MainTest {
     }
 
     @Test
-    public void getAndValidateSchema() {
+    public void postCreateResource() {
+
+        String requestBody = "{\n" +
+                "  \"title\": \"foo\",\n" +
+                "  \"body\": \"bar\",\n" +
+                "  \"userId\": 1\n" +
+                "}";
+
         given()
-                .spec(requestSpec)
-
+                .header("Content-type", "application/json; charset=UTF-8")
+                .contentType(ContentType.JSON)
+                .body(requestBody)
                 .when()
-                .get()
-
+                .post("/posts")
                 .then()
-                .spec(responseSpec)
-                .statusCode(200)
-                .body(JsonSchemaValidator.matchesJsonSchemaInClasspath("jsonschema/usersResponseSchema.json"));
+                .statusCode(201)  // Verifying the response status code is 201 Created
+                .body("title", equalTo("foo"))
+                .body("body", equalTo("bar"))
+                .body("userId", equalTo(1))
+                .extract().response();
     }
 
     @Test
-    public void postAndValidateData() throws JsonProcessingException {
+    public void putCreateResource() {
 
-        data postRequest = new data("recommendation", "motorcycle", 14);
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        String requestBody = objectMapper.writeValueAsString(postRequest);
+        String requestBody = "{\n" +
+                "  \"title\": \"foo\",\n" +
+                "  \"body\": \"bar\",\n" +
+                "  \"userId\": 1\n" +
+                "}";
 
         given()
-                .spec(requestSpec)
+                .header("Content-type", "application/json; charset=UTF-8")
+                .contentType(ContentType.JSON)
                 .body(requestBody)
-
                 .when()
-                .post()
-
+                .post("/posts")
                 .then()
-                .spec(responseSpec)
-                .log().body()
-                .body("title", equalTo(postRequest.getTitle()),
-                        "body", equalTo(postRequest.getBody()),
-                        "userId", equalTo(postRequest.getUserId()),
-                        "id", equalTo(101));
+                .statusCode(201)  // Verifying the response status code is 201 Created
+                .body("title", equalTo("foo"))
+                .body("body", equalTo("bar"))
+                .body("userId", equalTo(1))
+                .extract().response();
+    }
+
+    @Test
+    public void updateResource() {
+        
+        String requestBody = "{\n" +
+                "  \"id\": 1,\n" +
+                "  \"title\": \"foo\",\n" +
+                "  \"body\": \"bar\",\n" +
+                "  \"userId\": 1\n" +
+                "}";
+
+        // Send the PUT request
+        given()
+                .contentType(ContentType.JSON)
+                .body(requestBody)
+                .when()
+                .put("/posts/1")
+                .then()
+                .statusCode(200)
+                .body("id", equalTo(1))
+                .body("title", equalTo("foo"))
+                .body("body", equalTo("bar"))
+                .body("userId", equalTo(1))
+                .extract().response();
+    }
+
+    @Test
+    public void updatePost() {
+
+        String requestBody = "{\n" +
+                "  \"id\": 1,\n" +
+                "  \"title\": \"foo\",\n" +
+                "  \"body\": \"bar\",\n" +
+                "  \"userId\": 1\n" +
+                "}";
+
+        // Send the PUT request
+        given()
+                .contentType(ContentType.JSON)
+                .body(requestBody)
+                .when()
+                .put("/posts/1")
+                .then()
+                .statusCode(200)
+                .body("id", equalTo(1))
+                .body("title", equalTo("foo"))
+                .body("body", equalTo("bar"))
+                .body("userId", equalTo(1))
+                .extract().response();
+    }
+
+    @Test
+    public void deletePost() {
+
+        // Send the DELETE request
+        given()
+                .when()
+                .delete("/posts/1")
+                .then()
+                .statusCode(200);
+    }
+
+    @Test
+    public void getPostsByUser() {
+
+        // Send the DELETE request
+        given()
+                .when()
+                .get("/posts?userId=1")
+                .then()
+                .statusCode(200)
+                .extract().response();
+    }
+
+    @Test
+    public void getCommentsByPost() {
+        given()
+                .when()
+                .get("/posts/1/comments")
+                .then()
+                .statusCode(200)
+                .extract().response();
     }
 }
