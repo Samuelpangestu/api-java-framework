@@ -22,7 +22,7 @@ import org.junit.Test;
 import utils.*;
 import utils.data;
 
-public class MainTest {
+public class test {
 
     private static RequestSpecification requestSpec;
     public static ResponseSpecification responseSpec;
